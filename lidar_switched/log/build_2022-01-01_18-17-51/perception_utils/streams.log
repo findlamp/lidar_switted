@@ -1,0 +1,83 @@
+[0.010s] Invoking command in '/home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched/build/perception_utils': /usr/bin/cmake /home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched -DCMAKE_INSTALL_PREFIX=/home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched/install/perception_utils
+[0.073s] -- The C compiler identification is GNU 7.5.0
+[0.121s] -- The CXX compiler identification is GNU 7.5.0
+[0.126s] -- Check for working C compiler: /usr/bin/cc
+[0.177s] -- Check for working C compiler: /usr/bin/cc -- works
+[0.178s] -- Detecting C compiler ABI info
+[0.225s] -- Detecting C compiler ABI info - done
+[0.232s] -- Detecting C compile features
+[0.233s] -- Detecting C compile features - done
+[0.235s] -- Check for working CXX compiler: /usr/bin/c++
+[0.289s] -- Check for working CXX compiler: /usr/bin/c++ -- works
+[0.289s] -- Detecting CXX compiler ABI info
+[0.349s] -- Detecting CXX compiler ABI info - done
+[0.356s] -- Detecting CXX compile features
+[0.357s] -- Detecting CXX compile features - done
+[0.360s] -- Found ament_cmake: 1.1.4 (/opt/ros/galactic/share/ament_cmake/cmake)
+[0.381s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+[0.381s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.441s] -- Found rclcpp: 9.2.0 (/opt/ros/galactic/share/rclcpp/cmake)
+[0.480s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.486s] -- Found rosidl_adapter: 2.2.1 (/opt/ros/galactic/share/rosidl_adapter/cmake)
+[0.544s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "1.1.1f")  
+[0.566s] -- Found FastRTPS: /opt/ros/galactic/include  
+[0.623s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.669s] -- Found rmw_implementation_cmake: 3.3.1 (/opt/ros/galactic/share/rmw_implementation_cmake/cmake)
+[0.671s] -- Found rmw_cyclonedds_cpp: 0.22.3 (/opt/ros/galactic/share/rmw_cyclonedds_cpp/cmake)
+[0.685s] -- Using RMW implementation 'rmw_cyclonedds_cpp' as default
+[0.686s] -- Looking for pthread.h
+[0.736s] -- Looking for pthread.h - found
+[0.736s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[0.789s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+[0.789s] -- Looking for pthread_create in pthreads
+[0.832s] -- Looking for pthread_create in pthreads - not found
+[0.832s] -- Looking for pthread_create in pthread
+[0.883s] -- Looking for pthread_create in pthread - found
+[0.884s] -- Found Threads: TRUE  
+[0.985s] -- Found sensor_msgs: 2.2.3 (/opt/ros/galactic/share/sensor_msgs/cmake)
+[1.073s] -- Found message_filters: 3.2.6 (/opt/ros/galactic/share/message_filters/cmake)
+[1.080s] -- Found eigen3_cmake_module: 0.1.1 (/opt/ros/galactic/share/eigen3_cmake_module/cmake)
+[1.082s] -- Found Eigen3: TRUE (found version "3.3.7") 
+[1.083s] -- Found ament_lint_auto: 0.10.6 (/opt/ros/galactic/share/ament_lint_auto/cmake)
+[1.117s] Error parsing '/home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched/package.xml':
+[1.222s] Traceback (most recent call last):
+[1.222s]   File "/usr/lib/python3/dist-packages/catkin_pkg/package.py", line 597, in parse_package_string
+[1.222s]     root = dom.parseString(data)
+[1.222s]   File "/usr/lib/python3.8/xml/dom/minidom.py", line 1969, in parseString
+[1.222s]     return expatbuilder.parseString(string)
+[1.223s]   File "/usr/lib/python3.8/xml/dom/expatbuilder.py", line 925, in parseString
+[1.223s]     return builder.parseString(string)
+[1.223s]   File "/usr/lib/python3.8/xml/dom/expatbuilder.py", line 223, in parseString
+[1.223s]     parser.Parse(string, True)
+[1.223s] xml.parsers.expat.ExpatError: junk after document element: line 23, column 2
+[1.223s] 
+[1.223s] During handling of the above exception, another exception occurred:
+[1.223s] 
+[1.223s] Traceback (most recent call last):
+[1.223s]   File "/opt/ros/galactic/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 151, in <module>
+[1.223s]     main()
+[1.223s]   File "/opt/ros/galactic/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 54, in main
+[1.223s]     raise e
+[1.223s]   File "/opt/ros/galactic/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 50, in main
+[1.223s]     package = parse_package_string(
+[1.223s]   File "/usr/lib/python3/dist-packages/catkin_pkg/package.py", line 599, in parse_package_string
+[1.223s]     raise InvalidPackage('The manifest contains invalid XML:\n%s' % ex, filename)
+[1.223s] catkin_pkg.package.InvalidPackage: Error(s) in package '/home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched/package.xml':
+[1.223s] The manifest contains invalid XML:
+[1.223s] junk after document element: line 23, column 2
+[1.239s] CMake Error at /opt/ros/galactic/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:94 (message):
+[1.239s]   execute_process(/usr/bin/python3
+[1.239s]   /opt/ros/galactic/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py
+[1.239s]   /home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched/package.xml
+[1.239s]   /home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched/build/perception_utils/ament_cmake_core/package.cmake)
+[1.240s]   returned error code 1
+[1.240s] Call Stack (most recent call first):
+[1.240s]   /opt/ros/galactic/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:49 (_ament_package_xml)
+[1.240s]   /opt/ros/galactic/share/ament_lint_auto/cmake/ament_lint_auto_find_test_dependencies.cmake:31 (ament_package_xml)
+[1.240s]   CMakeLists.txt:26 (ament_lint_auto_find_test_dependencies)
+[1.240s] 
+[1.240s] 
+[1.240s] -- Configuring incomplete, errors occurred!
+[1.241s] See also "/home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched/build/perception_utils/CMakeFiles/CMakeOutput.log".
+[1.241s] See also "/home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched/build/perception_utils/CMakeFiles/CMakeError.log".
+[1.248s] Invoked command in '/home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched/build/perception_utils' returned '1': /usr/bin/cmake /home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched -DCMAKE_INSTALL_PREFIX=/home/gaoming/Documents/autoIndy/lidar_switited/lidar_switched/install/perception_utils
