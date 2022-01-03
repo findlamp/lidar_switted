@@ -1,8 +1,0 @@
-source;share/lidar_switched/hook/cmake_prefix_path.ps1
-source;share/lidar_switched/hook/cmake_prefix_path.dsv
-source;share/lidar_switched/hook/cmake_prefix_path.sh
-source;share/lidar_switched/local_setup.bash
-source;share/lidar_switched/local_setup.dsv
-source;share/lidar_switched/local_setup.ps1
-source;share/lidar_switched/local_setup.sh
-source;share/lidar_switched/local_setup.zsh
