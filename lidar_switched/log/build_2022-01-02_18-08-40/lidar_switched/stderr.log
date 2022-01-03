@@ -1,0 +1,3 @@
+[01m[K/home/gaoming/Documents/autoIndy/lidar_switted/lidar_switched/src/lidar_swithed.cpp:130:52:[m[K [01;35m[Kwarning: [m[KISO C++ forbids use of ‘[01m[Kauto[m[K’ in parameter declaration [[01;35m[K-Wpedantic[m[K]
+         void publishXYZI(Eigen::MatrixXd& combined,[01;35m[Kauto[m[K stamp)
+                                                    [01;35m[K^~~~[m[K

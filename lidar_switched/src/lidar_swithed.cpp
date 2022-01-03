@@ -2,6 +2,7 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include <time.h>
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/qos.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -49,7 +50,7 @@ class LidarStitching : public rclcpp::Node
     private:
         void cloud_callback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& leftMsg, const sensor_msgs::msg::PointCloud2::ConstSharedPtr& rightMsg, const sensor_msgs::msg::PointCloud2::ConstSharedPtr& frontMsg)
         {
-            RCLCPP_INFO(this->get_logger(), "I heard: ");
+            //RCLCPP_INFO(this->get_logger(), "I heard: ");
             int left_size = leftMsg -> width;
             int right_size = rightMsg -> width;
             int front_size = frontMsg -> width;
@@ -79,7 +80,7 @@ class LidarStitching : public rclcpp::Node
 
 
             combined << LeftPoint, FrontPoint, RightPoint;
-
+            combined.block(0,3,combined.rows(),1) = Intensity; 
             publishXYZI(combined,frontMsg->header.stamp);
         }
 
@@ -107,21 +108,15 @@ class LidarStitching : public rclcpp::Node
         void msg_to_pointcloud(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& Msg,Eigen::MatrixXd& Point){
 
             int size = Msg -> width;
-            float x,y,z,i = 0;
             int offset = 0;
             int pointstep = Msg -> point_step;
             
             for (int j = 0; j < size; j++){
 
-              x = unpackFloat(Msg ->data,offset+0);
-              y = unpackFloat(Msg ->data,offset+4);
-              z = unpackFloat(Msg ->data,offset+8);
-              i = unpackFloat(Msg ->data,offset+12);
-
-              Point(j,0) = x;
-              Point(j,1) = y;
-              Point(j,2) = z;
-              Point(j,3) = i;
+              Point(j,0) = unpackFloat(Msg ->data,offset+0);
+              Point(j,1) = unpackFloat(Msg ->data,offset+4);
+              Point(j,2) = unpackFloat(Msg ->data,offset+8);
+              Point(j,3) = unpackFloat(Msg ->data,offset+12);
               offset += pointstep;
             }
         }
@@ -129,8 +124,9 @@ class LidarStitching : public rclcpp::Node
 
         void publishXYZI(Eigen::MatrixXd& combined,auto stamp)
         {
-            uint32_t point_step = 4;
-            uint32_t data_size = combined.rows();
+            uint32_t point_step = 16;
+            size_t data_size = combined.rows();
+            
             sensor_msgs::msg::PointCloud2 msg;
             msg.header.frame_id = "base_link";
             msg.header.stamp = stamp;
@@ -175,7 +171,7 @@ class LidarStitching : public rclcpp::Node
         
         float left_shift[3] = {1.549, 0.267, 0.543};
         float right_shift[3] = {1.549, -0.267, 0.543};
-        float front_shift[3] = {0,0,0};
+        float front_shift[3] = {2.242, 0, 0.448};
         float cog_shift[3] = {-1.3206, 0.030188, -0.23598};
         Eigen::Matrix4d left_to_ram;
         Eigen::Matrix4d right_to_ram;
