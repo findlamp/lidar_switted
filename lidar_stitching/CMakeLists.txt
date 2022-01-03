@@ -14,6 +14,8 @@ find_package(sensor_msgs REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3)
+find_package(PCL 1.3 REQUIRED COMPONENTS common io)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -27,7 +29,7 @@ if(BUILD_TESTING)
 endif()
 
 add_executable(lidar_stitching src/LidarStitching.cpp)
-ament_target_dependencies(lidar_stitching rclcpp sensor_msgs message_filters Eigen3)
+ament_target_dependencies(lidar_stitching rclcpp sensor_msgs message_filters Eigen3 PCL)
 
 install(TARGETS
   lidar_stitching

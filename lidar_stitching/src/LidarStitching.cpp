@@ -16,9 +16,32 @@
 
 #include <sys/types.h>
 #include <typeinfo>
-using std::placeholders::_1;
-using std::placeholders::_2;
-using std::placeholders::_3;
+
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/common/transforms.h>
+#include <pcl/point_cloud.h>
+
+
+struct PointXYZIRT
+{
+    PCL_ADD_POINT4D;      
+    float intensity;                 ///< laser intensity reading
+    float ring;                      ///< laser ring number
+    float time;
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW     // ensure proper alignment
+} EIGEN_ALIGN16;
+
+POINT_CLOUD_REGISTER_POINT_STRUCT(PointXYZIRT,
+                            (float, x, x)
+                            (float, y, y)
+                            (float, z, z)
+                            (float, intensity, intensity)
+                            (float, ring, ring)
+                            (float, time, time))
+
+
 
 class LidarStitching : public rclcpp::Node
 {
@@ -43,6 +66,10 @@ class LidarStitching : public rclcpp::Node
             right_global = ram_to_cog * right_to_ram;
             front_global = ram_to_cog * front_to_ram;
 
+            using std::placeholders::_1;
+            using std::placeholders::_2;
+            using std::placeholders::_3;
+
             publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("lidar_stitched", 10);
             sync_ = std::make_shared<Sync>(MySyncPolicy(5), leftSub, rightSub, frontSub);
             sync_->registerCallback(std::bind(&LidarStitching::cloud_callback, this, _1, _2, _3));
@@ -50,38 +77,73 @@ class LidarStitching : public rclcpp::Node
     private:
         void cloud_callback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& leftMsg, const sensor_msgs::msg::PointCloud2::ConstSharedPtr& rightMsg, const sensor_msgs::msg::PointCloud2::ConstSharedPtr& frontMsg)
         {
-            //RCLCPP_INFO(this->get_logger(), "I heard: ");
-            int left_size = leftMsg -> width;
-            int right_size = rightMsg -> width;
-            int front_size = frontMsg -> width;
+            // //RCLCPP_INFO(this->get_logger(), "I heard: ");
+            // int left_size = leftMsg -> width;
+            // int right_size = rightMsg -> width;
+            // int front_size = frontMsg -> width;
 
-            Eigen::MatrixXd LeftPoint(left_size,4);
-            Eigen::MatrixXd RightPoint(right_size,4);
-            Eigen::MatrixXd FrontPoint(front_size,4);
-            Eigen::VectorXd Intensity(left_size + right_size + front_size);
-            Eigen::VectorXd left = Eigen::VectorXd::Constant(left_size,1);
-            Eigen::VectorXd right = Eigen::VectorXd::Constant(right_size,1);
-            Eigen::VectorXd front = Eigen::VectorXd::Constant(front_size,1);
-            Eigen::MatrixXd combined(left_size + right_size + front_size,4);
+            // Eigen::MatrixXd LeftPoint(left_size,4);
+            // Eigen::MatrixXd RightPoint(right_size,4);
+            // Eigen::MatrixXd FrontPoint(front_size,4);
+            // Eigen::VectorXd Intensity(left_size + right_size + front_size);
+            // Eigen::VectorXd left = Eigen::VectorXd::Constant(left_size,1);
+            // Eigen::VectorXd right = Eigen::VectorXd::Constant(right_size,1);
+            // Eigen::VectorXd front = Eigen::VectorXd::Constant(front_size,1);
+            // Eigen::MatrixXd combined(left_size + right_size + front_size,4);
 
-            msg_to_pointcloud(leftMsg,LeftPoint);
-            msg_to_pointcloud(rightMsg,RightPoint);
-            msg_to_pointcloud(frontMsg,FrontPoint);
+            // msg_to_pointcloud(leftMsg,LeftPoint);
+            // msg_to_pointcloud(rightMsg,RightPoint);
+            // msg_to_pointcloud(frontMsg,FrontPoint);
 
-            Intensity << LeftPoint.col(3), RightPoint.col(3),FrontPoint.col(3);
+            // Intensity << LeftPoint.col(3), RightPoint.col(3),FrontPoint.col(3);
             
-            LeftPoint.block(0,3,left_size,1) = left;
-            RightPoint.block(0,3,right_size,1) = right;
-            FrontPoint.block(0,3,front_size,1) = front;
+            // LeftPoint.block(0,3,left_size,1) = left;
+            // RightPoint.block(0,3,right_size,1) = right;
+            // FrontPoint.block(0,3,front_size,1) = front;
 
-            LeftPoint = LeftPoint * left_global.transpose();
-            RightPoint = RightPoint * right_global.transpose();
-            FrontPoint = FrontPoint * front_global.transpose();
+            // LeftPoint = LeftPoint * left_global.transpose();
+            // RightPoint = RightPoint * right_global.transpose();
+            // FrontPoint = FrontPoint * front_global.transpose();
+
+            pcl::PCLPointCloud2 left;
+            pcl::PCLPointCloud2 right;
+            pcl::PCLPointCloud2 front;
+
+            pcl_conversions::toPCL(*leftMsg, left);
+            pcl_conversions::toPCL(*rightMsg, right);
+            pcl_conversions::toPCL(*frontMsg, front);
+
+            pcl::PointCloud<PointXYZIRT> leftCloud;
+            pcl::PointCloud<PointXYZIRT> rightCloud;
+            pcl::PointCloud<PointXYZIRT> frontCloud;
+
+            pcl::fromPCLPointCloud2(left, leftCloud);
+            pcl::fromPCLPointCloud2(right, rightCloud);
+            pcl::fromPCLPointCloud2(front, frontCloud);
+
+            pcl::PointCloud<PointXYZIRT> leftTransformed;
+            pcl::PointCloud<PointXYZIRT> rightTransformed;
+            pcl::PointCloud<PointXYZIRT> frontTransformed;
+
+            pcl::transformPointCloud(leftCloud, leftTransformed, left_global);
+            pcl::transformPointCloud(rightCloud, rightTransformed, right_global);
+            pcl::transformPointCloud(frontCloud, frontTransformed, front_global);
+
+            pcl::PointCloud<PointXYZIRT> stitchedCloud = leftTransformed + rightTransformed + frontTransformed;
+
+            sensor_msgs::msg::PointCloud2 stitched_cloud_msg;
+            pcl::toROSMsg(stitchedCloud, stitched_cloud_msg);
+
+            stitched_cloud_msg.header.stamp = this -> get_clock() -> now();
+            stitched_cloud_msg.header.frame_id = std::string("base_link");
+
+            publisher_ -> publish(stitched_cloud_msg);
+            // std::cout << "Publishing" << std::endl;
 
 
-            combined << LeftPoint, FrontPoint, RightPoint;
-            combined.block(0,3,combined.rows(),1) = Intensity; 
-            publishXYZI(combined,frontMsg->header.stamp);
+            // combined << LeftPoint, FrontPoint, RightPoint;
+            // combined.block(0,3,combined.rows(),1) = Intensity; 
+            // publishXYZI(combined,frontMsg->header.stamp);
         }
 
         float unpackFloat(const std::vector<unsigned char>& buf, int i) {
@@ -95,7 +157,7 @@ class LidarStitching : public rclcpp::Node
         
 
 
-        void generate_transform(Eigen::Matrix4d& tranform, float vector[],float angle){
+        void generate_transform(Eigen::Matrix4f& tranform, float vector[],float angle){
 
             tranform << cos(angle),-sin(angle),0,vector[0],
                         sin(angle),cos(angle), 0,vector[1],
@@ -171,14 +233,14 @@ class LidarStitching : public rclcpp::Node
         float right_shift[3] = {1.549, -0.267, 0.543};
         float front_shift[3] = {2.242, 0, 0.448};
         float cog_shift[3] = {-1.3206, 0.030188, -0.23598};
-        Eigen::Matrix4d left_to_ram;
-        Eigen::Matrix4d right_to_ram;
-        Eigen::Matrix4d front_to_ram;
-        Eigen::Matrix4d ram_to_cog;
+        Eigen::Matrix4f left_to_ram;
+        Eigen::Matrix4f right_to_ram;
+        Eigen::Matrix4f front_to_ram;
+        Eigen::Matrix4f ram_to_cog;
 
-        Eigen::Matrix4d left_global;
-        Eigen::Matrix4d right_global;
-        Eigen::Matrix4d front_global;
+        Eigen::Matrix4f left_global;
+        Eigen::Matrix4f right_global;
+        Eigen::Matrix4f front_global;
         
         
 
