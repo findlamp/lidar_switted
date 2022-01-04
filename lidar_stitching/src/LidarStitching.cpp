@@ -26,7 +26,7 @@
 
 struct PointXYZIRT
 {
-    PCL_ADD_POINT4D;      
+    PCL_ADD_POINT4D;
     float intensity;                 ///< laser intensity reading
     float ring;                      ///< laser ring number
     float time;
@@ -134,7 +134,7 @@ class LidarStitching : public rclcpp::Node
             sensor_msgs::msg::PointCloud2 stitched_cloud_msg;
             pcl::toROSMsg(stitchedCloud, stitched_cloud_msg);
 
-            stitched_cloud_msg.header.stamp = this -> get_clock() -> now();
+            stitched_cloud_msg.header.stamp = leftMsg -> header.stamp;
             stitched_cloud_msg.header.frame_id = std::string("base_link");
 
             publisher_ -> publish(stitched_cloud_msg);
